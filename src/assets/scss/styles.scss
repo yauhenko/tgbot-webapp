@@ -1,1 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Roboto:wght@400;500;700&family=Rubik:wght@300&display=swap');
+@import '@fontsource/roboto/300.css';
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import '@fontsource/roboto/700.css';
+@import 'react-toastify/dist/ReactToastify.css';
+
+body {
+  font-family: Roboto, serif;
+  font-size: 16px;
+}
+
+b {
+  font-weight: 500;
+}
+
+strong {
+  font-weight: 700;
+}
+
+small {
+  color: #555;
+  font-size: 85%;
+}

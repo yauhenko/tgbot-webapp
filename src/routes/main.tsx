@@ -1,40 +1,41 @@
-import { useCallback } from 'react';
-import { api } from '../modules/api';
-import { UserBot } from '../types';
+import React from 'react';
 import session from '../modules/session';
 import { observer } from 'mobx-react';
+import { Avatar, IconButton, Stack } from '@mui/material';
+import { Logout } from '@mui/icons-material';
+import TelegramLogin from '../components/telegram-login';
 
 const Main = observer(() => {
-  const auth = useCallback(() => {
-    // @ts-ignore
-    window.Telegram.Login.auth({ bot_id: '6495023612', request_access: true }, (data: any) => {
-      if (!data) return;
-      console.log(data);
-      api
-        .post('/bot/1/oauth', { data })
-        .then(({ ub, token }: { ub: UserBot; token: string }) => {
-          localStorage.setItem('token', token);
-          session.ub = ub;
-        })
-        .catch(alert);
-    });
-  }, []);
-
   return (
     <div>
-      {session.ub ? (
-        <div>
-          <p>
-            Hello, <b>{session.ub.user.username}</b>!
-          </p>
-          {session.ub.user.photoUrl && <img alt="" src={session.ub.user.photoUrl} />}
-          <p>
-            <button onClick={session.logout}>Exit</button>
-          </p>
-        </div>
-      ) : (
-        <button onClick={auth}>Auth via Telegram</button>
-      )}
+      <Stack direction="row" justifyContent="space-between">
+        <Stack>LOGO</Stack>
+        <Stack>NAV</Stack>
+
+        {session.ub ? (
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Avatar src={session.ub.user.photoUrl ?? ''}>
+              {session.ub.user.username?.substring(0, 1).toUpperCase()}
+            </Avatar>
+            <Stack>
+              <b>{session.ub.user.firstName ?? `@${session.ub.user.username || session.ub.user.id}`}</b>
+              <small>Бесплатный тариф</small>
+            </Stack>
+            <IconButton onClick={session.logout}>
+              <Logout />
+            </IconButton>
+          </Stack>
+        ) : (
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Avatar>Д</Avatar>
+            <Stack>
+              <b>Демо пользователь</b>
+              <small>Бесплатный тариф</small>
+            </Stack>
+            <TelegramLogin />
+          </Stack>
+        )}
+      </Stack>
     </div>
   );
 });
