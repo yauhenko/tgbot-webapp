@@ -24,8 +24,7 @@ export type Category = {
   id: string;
   isParent: boolean;
   name: string;
-  icon: string | null;
-  description: string | null;
+  message: string;
 };
 
 export type Settings = {
@@ -36,4 +35,12 @@ export type Settings = {
 export type RefStats = {
   total: number;
   plus: number;
+};
+
+export type Status = {
+  id: string;
+  status: 'wait' | 'work' | 'done' | 'fail';
+  truncated?: boolean;
+  result?: string;
+  error?: string;
 };

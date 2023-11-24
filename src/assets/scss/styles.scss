@@ -21,3 +21,16 @@ small {
   color: #555;
   font-size: 85%;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.link {
+  cursor: pointer;
+  color: #2f7cd3;
+  text-decoration: underline;
+  &:hover {
+    text-decoration: none;
+  }
+}

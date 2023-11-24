@@ -1,37 +1,31 @@
-import { useCallback, useState } from 'react';
 import { api, botId, botTelegramId } from '../modules/api';
 import { UserBot } from '../types';
 import session from '../modules/session';
-import { CircularProgress, IconButton } from '@mui/material';
-import { Login } from '@mui/icons-material';
-import { toast } from 'react-toastify';
+import { runInAction } from 'mobx';
 
-const TelegramLogin = () => {
-  const [loading, setLoading] = useState(false);
-  const auth = useCallback(() => {
-    setLoading(true);
+export type TelegramAuthData = {
+  id: number;
+  first_name?: string;
+  username?: string;
+  photo_url?: string;
+  auth_date: number;
+  hash: string;
+};
+
+export const telegramLogin = (): Promise<{ data: TelegramAuthData; ub: UserBot; token: string } | false> => {
+  return new Promise((resolve, reject) => {
     // @ts-ignore
-    window.Telegram.Login.auth({ bot_id: botTelegramId, request_access: true }, (data: any) => {
-      if (!data) {
-        setLoading(false);
-        return;
-      }
-      api
+    window.Telegram.Login.auth({ bot_id: botTelegramId, request_access: true }, (data: TelegramAuthData) => {
+      if (!data) return reject('Login failed');
+      return api
         .post(`/bot/${botId}/oauth`, { data })
         .then(({ ub, token }: { ub: UserBot; token: string }) => {
           localStorage.setItem('token', token);
-          session.ub = ub;
+          api.setToken(token);
+          runInAction(() => (session.ub = ub));
+          resolve({ data, ub, token });
         })
-        .catch(toast.error)
-        .finally(() => setLoading(false));
+        .catch(reject);
     });
-  }, [setLoading]);
-
-  return (
-    <IconButton title="Войти с помощью Telegram" disabled={loading} onClick={auth}>
-      {loading ? <CircularProgress size={24} /> : <Login />}
-    </IconButton>
-  );
+  });
 };
-
-export default TelegramLogin;
